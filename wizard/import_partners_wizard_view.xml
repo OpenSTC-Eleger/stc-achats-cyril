@@ -1,0 +1,63 @@
+<!-- 
+    Openstc Achat Ciril module for OpenERP, Description
+    Copyright (C) 200X Company (<http://website>) author
+
+    This file is a part of Openstc Achat Ciril
+
+    Openstc Achat Ciril is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Openstc Achat Ciril is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<openerp>
+    <data>
+   		
+   		<record model="ir.ui.view" id="view_openstc_achat_ciril_import_tiers_form_wizard">
+			<field name="name">Synchroniser Tiers Formulaire</field>
+			<field name="model">openstc.import.partners.wizard</field>
+			<field name="type">form</field>
+			<field name="priority">10</field>
+			<field name="arch" type="xml">
+				<form>
+				    <group colspan="2" col="2">
+						<field name="csv_file"/>
+						<group col="4" colspan="2">
+							<field name="csv_separator"/>
+							<field name="csv_text_separator"/>
+						</group>
+						<field name="is_exhaustive"/>
+					</group>
+					<group colspan="2">
+					    <field name="output_msg"/>
+					</group>
+					<button name="import_partners" type="object" states="wait" string="Lancer" colspan="1"/>
+					<button special="cancel" string="Fermer"/>
+					<field name="state" invisible="1"/>
+				</form>
+			</field>
+		</record>
+        	
+		<record model="ir.actions.act_window" id="action_view_openstc_achat_ciril_import_tiers">
+			<field name="name">Synchroniser Tiers</field>
+			<field name="res_model">openstc.import.partners.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		
+		<menuitem id="openstc_achat_ciril_root" name="Paserelle CIRIL" 
+		    parent="openstc_achat_stock.menu_open_achat_stock"/>
+		
+		<menuitem id="openstc_achat_ciril_import_tiers_menu" action="action_view_openstc_achat_ciril_import_tiers"
+		    parent="openstc_achat_ciril_root"/>
+		
+    </data>
+</openerp>
