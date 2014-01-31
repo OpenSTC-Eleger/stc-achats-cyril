@@ -69,21 +69,33 @@ class openstc_import_partners_wizard(osv.osv_memory):
             csv_file = StringIO.StringIO(base64.decodestring(wizard.csv_file))
             #Note: I use str() to retrieve ascii code instead of unicode, csv library does not support unicode for its params
             read = csv.DictReader(csv_file, 
-                          fieldnames=['code_tiers','name'],
+                          fieldnames=['code_tiers','name','type','civility','type_id','identifier','street','zip','city',
+                                      'nat','cat','firstname','lastname','street2','street3','synonyme','exe_sup',
+                                      'exe_occ','regie','collectivity','categ_tiers'],
                           delimiter=str(wizard.csv_separator), 
                           quotechar=str(wizard.csv_text_separator) and str(wizard.csv_text_separator) or '')
             read.next()
             #for each line, update database (create or update records)
             #if name is not present in file, write False by default to raise an openerp error (displayed to user by its own)
             for line in read:
+                values = {'name':line.get('name',False),
+                         'code_tiers_ciril':line.get('code_tiers'),
+                         'supplier':True,
+                         'active':True}
+                
                 if line.get('code_tiers','') in map_code_tiers_id.keys():
                     #partner found, update him and remove code_tiers key from map_code_tiers_id
                     partner_obj.write(cr, uid, [map_code_tiers_id.pop(line.get('code_tiers'))], 
-                                      {'name':line.get('name', False),'active':True},context=context) 
+                                      values,context=context) 
                     cpt_updated += 1
                 else:
-                    partner_obj.create(cr, uid, {'name':line.get('name',False),
-                                                 'code_tiers_ciril':line.get('code_tiers')}, context=context)
+                    values.update({'code_tiers_ciril':line.get('code_tiers'),
+                                   'address':[(0,0,{'name':'/',
+                                          'street':line.get('street',''),
+                                          'street2':line.get('street2',''),
+                                          'zip':line.get('zip',''),
+                                          'city':line.get('city','')})]})
+                    partner_obj.create(cr, uid, values, context=context)
                     cpt_created += 1
             #deactivate partner where ids remains on map_coe_tiers_id
             if map_code_tiers_id and wizard.is_exhaustive:
